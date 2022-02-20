@@ -31,8 +31,8 @@ class CutechessMan:
                 -concurrency {self.threads} \
                 -each tc={self.tc}+{self.inc} \
                 -openings file=tuner/{self.book} order=random \
-                -games tuner/{self.games} \
-                -pgnout games.pgn"
+                -games {self.games} \
+                -pgnout tuner/games.pgn"
 
     def run(self, params_a: list[str], params_b: list[str]) -> MatchResult:
         cmd = self.get_cutechess_cmd(params_a, params_b)
