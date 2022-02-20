@@ -37,7 +37,7 @@ def main():
     params = params_from_config("config.json")
     cutechess = cutechess_from_config("cutechess.json")
     spsa = SpsaTuner(SpsaParams(0.1, 1.0, 100), params, cutechess)
-    for _ in range(100):
+    while True:
         spsa.step()
         for param in spsa.params():
             print(param.pretty())
