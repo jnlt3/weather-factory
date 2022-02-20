@@ -22,7 +22,7 @@ class CutechessMan:
         self.threads = threads
 
     def get_cutechess_cmd(self, params_a: list[str], params_b: list[str]) -> str:
-        return f"./cutechess-cli \
+        return f"./tuner/cutechess-cli \
                 -engine cmd=./tuner/{self.engine} name={self.engine} proto=uci option.Hash={self.hash_size} {' '.join(params_a)} \
                 -engine cmd=./tuner/{self.engine} name={self.engine} proto=uci option.Hash={self.hash_size} {' '.join(params_b)} \
                 -resign movecount=3 score=400 \
