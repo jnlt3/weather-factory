@@ -1,0 +1,8 @@
+{
+    "engine": "engine",
+    "book": "book.epd",
+    "games": 16,
+    "tc": 1,
+    "hash": 8,
+    "threads": 1
+}

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import random
 import copy
 
+from cutechess import CutechessMan, MatchResult
+
 
 class Param:
     def __init__(self, name: str, value: int, min_value: int, max_value: int, elo_per_val: float):
@@ -21,7 +23,7 @@ class Param:
         self.value += amt
         self.value = min(max(self.value, self.min_value), self.max_value)
 
-    def to_uci(self) -> str:
+    def as_uci(self) -> str:
         return f"option.{self.name}={self.get()}"
 
     def pretty(self) -> str:
@@ -40,9 +42,10 @@ class SpsaParams:
 
 class SpsaTuner:
 
-    def __init__(self, spsa_params: SpsaParams, uci_params: list[Param]):
-        self.spsa = spsa_params
+    def __init__(self, spsa_params: SpsaParams, uci_params: list[Param], cutechess: CutechessMan):
         self.uci_params = uci_params
+        self.spsa = spsa_params
+        self.cutechess = cutechess
         self.delta = [0] * len(uci_params)
         self.t = 0
 
@@ -80,5 +83,7 @@ class SpsaTuner:
         return self.uci_params
 
     def gradient(self, params_a: list[Param], params_b: list[Param]) -> float:
-        # TODO: play games with cute chess
-        return 0.0
+        params_a = [p.as_uci() for p in params_a]
+        params_b = [p.as_uci() for p in params_b]
+        game_result: MatchResult = self.cutechess.run(params_a, params_b)
+        return -game_result.elo_diff
