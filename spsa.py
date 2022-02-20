@@ -37,7 +37,7 @@ class SpsaParams:
     A: int
     alpha: float = 0.6
     gamma: float = 0.1
-    target_elo: float = 4
+    target_elo: float = 2
 
 
 class SpsaTuner:

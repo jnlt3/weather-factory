@@ -33,10 +33,17 @@ def params_from_config(config: str):
         return params
 
 
+def spsa_from_config(config: str):
+    with open(config, "r") as config:
+        config = json.load(config)
+        return SpsaParams(config["a"], config["c"], config["A"], config["alpha"], config["gamma"], config["elo"])
+
+
 def main():
     params = params_from_config("config.json")
     cutechess = cutechess_from_config("cutechess.json")
-    spsa = SpsaTuner(SpsaParams(0.1, 1.0, 100), params, cutechess)
+    spsa_params = spsa_from_config("spsa.json")
+    spsa = SpsaTuner(spsa_params, params, cutechess)
     graph = Graph()
 
     while True:
