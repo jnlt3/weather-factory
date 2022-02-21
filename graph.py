@@ -1,23 +1,21 @@
-import copy
 from spsa import Param
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 
 
 class Graph:
     def __init__(self):
-        self.history = []
+        self.history: list[list[Param]] = []
 
     def update(self, params: list[Param]):
         self.history.append(params)
 
     def save(self, file_name: str):
-        iters = list(range(len(self.history)))
-        param_values = {}
+        param_values: dict[str, list[float]] = {}
         for params in self.history:
             for param in params:
                 if param.name not in param_values:
                     param_values[param.name] = []
                 param_values[param.name].append(param.value)
-        for param in param_values:
-            plt.plot(iters, param_values[param], label=param)
+        for name, value in param_values.items():
+            plt.plot(range(len(self.history)), value, label=name)
         plt.savefig(f"tuner/{file_name}")

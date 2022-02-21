@@ -4,5 +4,5 @@
     "A": 100,
     "alpha": 0.6,
     "gamma": 0.1,
-    "elo": 2
+    "target_elo": 2
 }
