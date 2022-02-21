@@ -27,10 +27,11 @@ class CutechessMan:
                 -engine cmd=./tuner/{self.engine} name={self.engine} proto=uci option.Hash={self.hash_size} {' '.join(params_b)} \
                 -resign movecount=3 score=400 \
                 -draw movenumber=40 movecount=8 score=10 \
+                -repeat \
                 -recover \
                 -concurrency {self.threads} \
                 -each tc={self.tc}+{self.inc} \
-                -openings file=tuner/{self.book} order=random \
+                -openings file=tuner/{self.book} format={self.book.split('.')[-1]} order=random plies=16 \
                 -games {self.games} \
                 -pgnout tuner/games.pgn"
 
