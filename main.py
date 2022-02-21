@@ -6,37 +6,22 @@ from cutechess import CutechessMan
 import copy
 
 
-def cutechess_from_config(config: str) -> CutechessMan:
-    with open(config, "r") as config:
-        config = json.load(config)
-        return CutechessMan(config["engine"],
-                            config["book"],
-                            config["games"],
-                            config["tc"],
-                            config["hash"],
-                            config["threads"])
+def cutechess_from_config(config_path: str) -> CutechessMan:
+    with open(config_path) as config_file:
+        config = json.load(config_file)
+    return CutechessMan(**config)
 
 
-def params_from_config(config: str):
-    with open(config, "r") as config:
-        params = []
-        config = json.load(config)
-        for name in config:
-            param = config[name]
-            params.append(Param(
-                name,
-                param["value"],
-                param["min_value"],
-                param["max_value"],
-                param["elo_per_val"]
-            ))
-        return params
+def params_from_config(config_path: str) -> list[Param]:
+    with open(config_path) as config_file:
+        config = json.load(config_file)
+    return [Param(name, **cfg) for name, cfg in config.items()]
 
 
-def spsa_from_config(config: str):
-    with open(config, "r") as config:
-        config = json.load(config)
-        return SpsaParams(config["a"], config["c"], config["A"], config["alpha"], config["gamma"], config["elo"])
+def spsa_from_config(config_path: str):
+    with open(config_path) as config_file:
+        config = json.load(config_file)
+    return SpsaParams(**config)
 
 
 def main():
@@ -48,10 +33,10 @@ def main():
 
     while True:
         spsa.step()
-        graph.update(copy.deepcopy(spsa.params()))
+        graph.update(copy.deepcopy(spsa.params))
         graph.save("graph.png")
-        for param in spsa.params():
-            print(param.pretty())
+        for param in spsa.params:
+            print(param)
 
 
 if __name__ == "__main__":

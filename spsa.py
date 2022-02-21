@@ -1,33 +1,36 @@
-
-
+from cutechess import CutechessMan
 from dataclasses import dataclass
-import random
+from random import randint
 import copy
 
-from cutechess import CutechessMan, MatchResult
 
-
+@dataclass
 class Param:
-    def __init__(self, name: str, value: int, min_value: int, max_value: int, elo_per_val: float):
-        assert elo_per_val > 0
-        self.name = name
-        self.value = value
-        self.min_value = min_value
-        self.max_value = max_value
-        self.elo_per_val = elo_per_val
+    name: str
+    value: float
+    min_value: int
+    max_value: int
+    elo_per_val: float
+
+    def __post_init__(self):
+        assert self.elo_per_val > 0
 
     def get(self) -> int:
         return round(self.value)
 
     def update(self, amt: float):
-        self.value += amt
-        self.value = min(max(self.value, self.min_value), self.max_value)
+        self.value = min(max(self.value + amt, self.min_value), self.max_value)
 
+    @property
     def as_uci(self) -> str:
         return f"option.{self.name}={self.get()}"
 
-    def pretty(self) -> str:
-        return f"{self.name} = {self.get()} in [{self.min_value}, {self.max_value}] with Elo diff {self.elo_per_val}"
+    def __str__(self) -> str:
+        return (
+            f"{self.name} = {self.get()} in "
+            f"[{self.min_value}, {self.max_value}] "
+            f"with Elo diff {self.elo_per_val}"
+        )
 
 
 @dataclass
@@ -42,7 +45,12 @@ class SpsaParams:
 
 class SpsaTuner:
 
-    def __init__(self, spsa_params: SpsaParams, uci_params: list[Param], cutechess: CutechessMan):
+    def __init__(
+        self,
+        spsa_params: SpsaParams,
+        uci_params: list[Param],
+        cutechess: CutechessMan
+    ):
         self.uci_params = uci_params
         self.spsa = spsa_params
         self.cutechess = cutechess
@@ -50,16 +58,15 @@ class SpsaTuner:
         self.t = 0
 
     def step(self):
-        a_t = self.spsa.a / (self.t + 1 + self.spsa.A) ** self.spsa.alpha
-        c_t = self.spsa.c / (self.t + 1) ** self.spsa.gamma
         self.t += 1
+        a_t = self.spsa.a / (self.t + self.spsa.A) ** self.spsa.alpha
+        c_t = self.spsa.c / self.t ** self.spsa.gamma
 
-        for i in range(len(self.delta)):
-            self.delta[i] = random.randint(0, 1) * 2 - 1
+        self.delta = [randint(0, 1) * 2 - 1 for _ in range(len(self.delta))]
 
         uci_params_a = []
         uci_params_b = []
-        for (param, delta) in zip(self.uci_params, self.delta):
+        for param, delta in zip(self.uci_params, self.delta):
             curr_delta = self.spsa.target_elo / param.elo_per_val
 
             step = delta * curr_delta * c_t
@@ -75,15 +82,16 @@ class SpsaTuner:
 
         gradient = self.gradient(uci_params_a, uci_params_b)
 
-        for (param, delta) in zip(self.uci_params, self.delta):
+        for param, delta in zip(self.uci_params, self.delta):
             param_grad = gradient / (delta * c_t)
             param.update(-param_grad * a_t)
 
+    @property
     def params(self) -> list[Param]:
         return self.uci_params
 
     def gradient(self, params_a: list[Param], params_b: list[Param]) -> float:
-        params_a = [p.as_uci() for p in params_a]
-        params_b = [p.as_uci() for p in params_b]
-        game_result: MatchResult = self.cutechess.run(params_a, params_b)
+        str_params_a = [p.as_uci for p in params_a]
+        str_params_b = [p.as_uci for p in params_b]
+        game_result = self.cutechess.run(str_params_a, str_params_b)
         return -game_result.elo_diff
