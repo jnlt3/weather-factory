@@ -48,20 +48,20 @@ class CutechessMan:
             line = cutechess.stdout.readline().strip().decode('ascii')
             if line != '':
                 print(line)
-                # Parse WLD score
-                if line.startswith("Score of"):
-                    start_index = line.find(":") + 1
-                    end_index = line.find("[")
-                    split = line[start_index:end_index].split(" - ")
-
-                    for i in range(3):
-                        score[i] = int(split[i])
-
-                # Parse Elo Difference
-                if line.startswith("Elo difference"):
-                    start_index = line.find(":") + 1
-                    end_index = line.find("+")
-                    elo_diff = float(line[start_index:end_index])
             else:
                 cutechess.wait()
                 return MatchResult(score[0], score[1], score[2], elo_diff)
+            # Parse WLD score
+            if line.startswith("Score of"):
+                start_index = line.find(":") + 1
+                end_index = line.find("[")
+                split = line[start_index:end_index].split(" - ")
+
+                for i in range(3):
+                    score[i] = int(split[i])
+
+            # Parse Elo Difference
+            if line.startswith("Elo difference"):
+                start_index = line.find(":") + 1
+                end_index = line.find("+")
+                elo_diff = float(line[start_index:end_index])
