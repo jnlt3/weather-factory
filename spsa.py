@@ -17,7 +17,7 @@ class Param:
         self.elo_per_val = elo_per_val
 
     def get(self) -> int:
-        return int(self.value)
+        return round(self.value)
 
     def update(self, amt: float):
         self.value += amt
