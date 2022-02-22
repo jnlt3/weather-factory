@@ -3,6 +3,6 @@
         "value": 50,
         "min_value": 0,
         "max_value": 100,
-        "elo_per_val": 0.2
+        "step": 10
     }
 }
