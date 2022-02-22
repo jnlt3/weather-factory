@@ -10,10 +10,10 @@ class Param:
     value: float
     min_value: int
     max_value: int
-    elo_per_val: float
+    step: float
 
     def __post_init__(self):
-        assert self.elo_per_val > 0
+        assert self.step > 0
 
     def get(self) -> int:
         return round(self.value)
@@ -29,7 +29,6 @@ class Param:
         return (
             f"{self.name} = {self.get()} in "
             f"[{self.min_value}, {self.max_value}] "
-            f"with Elo diff {self.elo_per_val}"
         )
 
 
@@ -40,7 +39,6 @@ class SpsaParams:
     A: int
     alpha: float = 0.6
     gamma: float = 0.1
-    target_elo: float = 2
 
 
 class SpsaTuner:
@@ -67,7 +65,7 @@ class SpsaTuner:
         uci_params_a = []
         uci_params_b = []
         for param, delta in zip(self.uci_params, self.delta):
-            curr_delta = self.spsa.target_elo / param.elo_per_val
+            curr_delta = param.step
 
             step = delta * curr_delta * c_t
 
@@ -83,8 +81,8 @@ class SpsaTuner:
         gradient = self.gradient(uci_params_a, uci_params_b)
 
         for param, delta, param in zip(self.uci_params, self.delta, self.uci_params):
-            param_grad = gradient / (delta * c_t * param.elo_per_val)
-            param.update(-param_grad * a_t)
+            param_grad = gradient / (delta * c_t)
+            param.update(-param_grad * a_t * param.step)
 
     @property
     def params(self) -> list[Param]:
@@ -94,4 +92,5 @@ class SpsaTuner:
         str_params_a = [p.as_uci for p in params_a]
         str_params_b = [p.as_uci for p in params_b]
         game_result = self.cutechess.run(str_params_a, str_params_b)
-        return -game_result.elo_diff
+        total = game_result.w + game_result.d + game_result.l
+        return (game_result.l - game_result.w) / total
