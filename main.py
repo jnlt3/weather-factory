@@ -37,6 +37,7 @@ def main():
         graph.save("graph.png")
         for param in spsa.params:
             print(param)
+        print()
 
 
 if __name__ == "__main__":
