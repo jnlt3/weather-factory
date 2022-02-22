@@ -82,8 +82,8 @@ class SpsaTuner:
 
         gradient = self.gradient(uci_params_a, uci_params_b)
 
-        for param, delta in zip(self.uci_params, self.delta):
-            param_grad = gradient / (delta * c_t)
+        for param, delta, param in zip(self.uci_params, self.delta, self.uci_params):
+            param_grad = gradient / (delta * c_t * param.elo_per_val)
             param.update(-param_grad * a_t)
 
     @property
