@@ -16,7 +16,7 @@ class Graph:
                 if param.name not in param_values:
                     param_values[param.name] = []
                 param_values[param.name].append(
-                    (param.value - param.min_value) / param.step)
+                    (param.value - param.start_val) / param.step)
         for name, value in param_values.items():
             plt.plot(range(len(self.history)), value, label=name)
         plt.savefig(f"tuner/{file_name}")

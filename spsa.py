@@ -13,6 +13,7 @@ class Param:
     step: float
 
     def __post_init__(self):
+        self.start_val: float = self.value
         assert self.step > 0
 
     def get(self) -> int:
