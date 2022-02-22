@@ -63,9 +63,7 @@ class CutechessMan:
 
             # Read each line of output until the pipe closes
             line = cutechess.stdout.readline().strip().decode('ascii')
-            if line:
-                print(line)
-            else:
+            if not line:
                 cutechess.wait()
                 return MatchResult(*score, elo_diff)
             # Parse WLD score
