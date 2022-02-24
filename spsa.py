@@ -26,9 +26,17 @@ class Param:
     def as_uci(self) -> str:
         return f"option.{self.name}={self.get()}"
 
+    def get_change(self) -> str:
+        if self.value > self.start_val:
+            return f"+{self.value - self.start_val:.2f}"
+        elif self.value < self.start_val:
+            return f"-{self.start_val - self.start_val:2f}"
+        else:
+            return f"+-0"
+
     def __str__(self) -> str:
         return (
-            f"{self.name} = {self.get()} in "
+            f"{self.name} = {self.get()}({self.get_change()}) in "
             f"[{self.min_value}, {self.max_value}] "
         )
 

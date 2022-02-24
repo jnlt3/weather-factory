@@ -19,4 +19,6 @@ class Graph:
                     (param.value - param.start_val) / param.step)
         for name, value in param_values.items():
             plt.plot(range(len(self.history)), value, label=name)
+        plt.legend()
         plt.savefig(f"tuner/{file_name}")
+        plt.clf()
