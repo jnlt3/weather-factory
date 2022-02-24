@@ -30,7 +30,7 @@ class Param:
         if self.value > self.start_val:
             return f"+{self.value - self.start_val:.2f}"
         elif self.value < self.start_val:
-            return f"-{self.start_val - self.start_val:2f}"
+            return f"-{self.start_val - self.value:2f}"
         else:
             return f"+-0"
 
