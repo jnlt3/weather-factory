@@ -54,6 +54,7 @@ class CutechessMan:
 
     def run(self, params_a: list[str], params_b: list[str]) -> MatchResult:
         cmd = self.get_cutechess_cmd(params_a, params_b)
+        print(cmd)
         cutechess = Popen(cmd.split(), stdout=PIPE)
 
         score = [0, 0, 0]
@@ -63,6 +64,7 @@ class CutechessMan:
 
             # Read each line of output until the pipe closes
             line = cutechess.stdout.readline().strip().decode('ascii')
+            print(line)
             if not line:
                 cutechess.wait()
                 return MatchResult(*score, elo_diff)
