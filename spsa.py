@@ -65,7 +65,7 @@ class SpsaTuner:
         self.t = 0
 
     def step(self):
-        self.t += 1
+        self.t += self.cutechess.games
         a_t = self.spsa.a / (self.t + self.spsa.A) ** self.spsa.alpha
         c_t = self.spsa.c / self.t ** self.spsa.gamma
 
