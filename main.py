@@ -35,6 +35,7 @@ def main():
         spsa.step()
         graph.update(copy.deepcopy(spsa.params))
         graph.save("graph.png")
+        print(f"iterations: {spsa.t}")
         for param in spsa.params:
             print(param)
         print()
