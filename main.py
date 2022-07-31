@@ -1,5 +1,6 @@
 
 import json
+import time
 from graph import Graph
 from spsa import Param, SpsaParams, SpsaTuner
 from cutechess import CutechessMan
@@ -31,14 +32,22 @@ def main():
     spsa = SpsaTuner(spsa_params, params, cutechess)
     graph = Graph()
 
-    while True:
-        spsa.step()
-        graph.update(copy.deepcopy(spsa.params))
-        graph.save("graph.png")
-        print(f"iterations: {spsa.t}")
-        for param in spsa.params:
-            print(param)
-        print()
+    avg_time = 0
+
+    try:
+        while True:
+            start = time.time()
+            spsa.step()
+            avg_time += time.time() - start
+
+            graph.update(spsa.t, copy.deepcopy(spsa.params))
+            graph.save("graph.png")
+            print(f"iterations: {spsa.t} ({(avg_time / spsa.t):.2f}s per iter)")
+            for param in spsa.params:
+                print(param)
+            print()
+    finally:
+        print("Saving state...")
 
 
 if __name__ == "__main__":
