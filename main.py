@@ -63,6 +63,8 @@ def main():
 
     avg_time = 0
 
+    start_t = t
+
     try:
         while True:
             start = time.time()
@@ -72,7 +74,7 @@ def main():
             graph.update(spsa.t, copy.deepcopy(spsa.params))
             graph.save("graph.png")
             print(
-                f"iterations: {spsa.t} ({(avg_time / spsa.t):.2f}s per iter)")
+                f"iterations: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per iter)")
             for param in spsa.params:
                 print(param)
             print()
