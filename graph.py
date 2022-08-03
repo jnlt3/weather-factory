@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 
 class Graph:
     def __init__(self):
+        self.time: list[int] = []
         self.history: list[list[Param]] = []
 
-    def update(self, params: list[Param]):
+    def update(self, time: list[int], params: list[Param]):
+        self.time.append(time)
         self.history.append(params)
 
     def save(self, file_name: str):
@@ -18,7 +20,7 @@ class Graph:
                 param_values[param.name].append(
                     (param.value - param.start_val) / param.step)
         for name, value in param_values.items():
-            plt.plot(range(len(self.history)), value, label=name)
+            plt.plot(self.time, value, label=name)
         plt.legend()
         plt.savefig(f"tuner/{file_name}")
         plt.clf()

@@ -46,8 +46,8 @@ class SpsaParams:
     a: float
     c: float
     A: int
-    alpha: float = 0.6
-    gamma: float = 0.1
+    alpha: float = 0.601
+    gamma: float = 0.102
 
 
 class SpsaTuner:
