@@ -50,30 +50,32 @@ class SpsaParams:
     gamma: float = 0.102
 
 
-class SpsaTuner:
+@dataclass
+class SpsaTest:
+    params_a: list[Param]
+    params_b: list[Param]
+    delta: list[int]
+    t: int
 
+
+class SpsaTuner:
     def __init__(
-        self,
-        spsa_params: SpsaParams,
-        uci_params: list[Param],
-        cutechess: CutechessMan
+        self, spsa_params: SpsaParams, uci_params: list[Param], cutechess: CutechessMan
     ):
         self.uci_params = uci_params
         self.spsa = spsa_params
         self.cutechess = cutechess
-        self.delta = [0] * len(uci_params)
         self.t = 0
 
-    def step(self):
-        self.t += self.cutechess.games
-        a_t = self.spsa.a / (self.t + self.spsa.A) ** self.spsa.alpha
-        c_t = self.spsa.c / self.t ** self.spsa.gamma
+    def get_tests(self):
+        self.t += 1
+        c_t = self.spsa.c / self.t**self.spsa.gamma
 
-        self.delta = [randint(0, 1) * 2 - 1 for _ in range(len(self.delta))]
+        delta_list = [randint(0, 1) * 2 - 1 for _ in range(len(self.uci_params))]
 
         uci_params_a = []
         uci_params_b = []
-        for param, delta in zip(self.uci_params, self.delta):
+        for param, delta in zip(self.uci_params, delta_list):
             curr_delta = param.step
 
             step = delta * curr_delta * c_t
@@ -87,9 +89,14 @@ class SpsaTuner:
             uci_params_a.append(uci_a)
             uci_params_b.append(uci_b)
 
-        gradient = self.gradient(uci_params_a, uci_params_b)
+        return SpsaTest(uci_params_a, uci_params_b, delta_list, self.t)
 
-        for param, delta, param in zip(self.uci_params, self.delta, self.uci_params):
+    def step(self, test: SpsaTest):
+        gradient = self.gradient(test.params_a, test.params_b)
+        a_t = self.spsa.a / (test.t + self.spsa.A) ** self.spsa.alpha
+        c_t = self.spsa.c / test.t**self.spsa.gamma
+
+        for param, delta in zip(self.uci_params, test.delta):
             param_grad = gradient / (delta * c_t)
             param.update(-param_grad * a_t * param.step)
 
@@ -101,4 +108,4 @@ class SpsaTuner:
         str_params_a = [p.as_uci for p in params_a]
         str_params_b = [p.as_uci for p in params_b]
         game_result = self.cutechess.run(str_params_a, str_params_b)
-        return (game_result.l - game_result.w)
+        return game_result.l - game_result.w

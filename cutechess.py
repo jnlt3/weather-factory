@@ -11,29 +11,24 @@ class MatchResult:
 
 
 class CutechessMan:
-
     def __init__(
         self,
         engine: str,
         book: str,
         games: int = 120,
-        tc: float = 5.0,
-        hash: int = 8,
-        threads: int = 1
+        tc: str = "5+0.05",
+        hash_size: int = 8,
+        game_pairs: bool = False,
     ):
         self.engine = engine
         self.book = book
         self.games = games
         self.tc = tc
-        self.inc = tc / 100
-        self.hash_size = hash
-        self.threads = threads
+        self.hash_size = hash_size
 
-    def get_cutechess_cmd(
-        self,
-        params_a: list[str],
-        params_b: list[str]
-    ) -> str:
+        self.current_concurrency = 0
+
+    def get_cutechess_cmd(self, params_a: list[str], params_b: list[str]) -> str:
         return (
             "./tuner/cutechess-cli "
             f"-engine cmd=./tuner/{self.engine} name={self.engine} proto=uci "
@@ -43,12 +38,10 @@ class CutechessMan:
             "-resign movecount=3 score=400 "
             "-draw movenumber=40 movecount=8 score=10 "
             "-repeat "
-            "-recover "
-            f"-concurrency {self.threads} "
-            f"-each tc={self.tc}+{self.inc} "
+            f"-each tc={self.tc} "
             f"-openings file=tuner/{self.book} "
             f"format={self.book.split('.')[-1]} order=random plies=16 "
-            f"-games {self.games} "
+            f"-games 2 "
             "-pgnout tuner/games.pgn"
         )
 
@@ -63,8 +56,8 @@ class CutechessMan:
         while True:
 
             # Read each line of output until the pipe closes
-            line = cutechess.stdout.readline().strip().decode('ascii')
-            print(line)
+            line = cutechess.stdout.readline().strip().decode("ascii")
+            # print(line)
             if not line:
                 cutechess.wait()
                 return MatchResult(*score, elo_diff)
