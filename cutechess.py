@@ -15,16 +15,15 @@ class CutechessMan:
         self,
         engine: str,
         book: str,
-        games: int = 120,
         tc: str = "5+0.05",
         hash_size: int = 8,
         game_pairs: bool = False,
     ):
         self.engine = engine
         self.book = book
-        self.games = games
         self.tc = tc
         self.hash_size = hash_size
+        self.game_pairs = game_pairs
 
         self.current_concurrency = 0
 
@@ -45,13 +44,12 @@ class CutechessMan:
             "-pgnout tuner/games.pgn"
         )
 
-    def run(self, params_a: list[str], params_b: list[str]) -> MatchResult:
+    def run(self, params_a: list[str], params_b: list[str]) -> int:
         cmd = self.get_cutechess_cmd(params_a, params_b)
         print(cmd)
         cutechess = Popen(cmd.split(), stdout=PIPE)
 
         score = [0, 0, 0]
-        elo_diff = 0.0
 
         while True:
 
@@ -60,7 +58,13 @@ class CutechessMan:
             # print(line)
             if not line:
                 cutechess.wait()
-                return MatchResult(*score, elo_diff)
+                if self.game_pairs:
+                    if score[0] > score[1]:
+                        return 1
+                    elif score[0] < score[1]:
+                        return -1
+                    return 0
+                return score[0] - score[1]
             # Parse WLD score
             if line.startswith("Score of"):
                 start_index = line.find(":") + 1
@@ -68,9 +72,3 @@ class CutechessMan:
                 split = line[start_index:end_index].split(" - ")
 
                 score = [int(i) for i in split]
-
-            # Parse Elo Difference
-            if line.startswith("Elo difference"):
-                start_index = line.find(":") + 1
-                end_index = line.find("+")
-                elo_diff = float(line[start_index:end_index])

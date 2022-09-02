@@ -108,4 +108,4 @@ class SpsaTuner:
         str_params_a = [p.as_uci for p in params_a]
         str_params_b = [p.as_uci for p in params_b]
         game_result = self.cutechess.run(str_params_a, str_params_b)
-        return game_result.l - game_result.w
+        return -game_result
