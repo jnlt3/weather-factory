@@ -83,7 +83,7 @@ def main():
                 save_state(spsa)
             
             print(
-                f"iterations: {spsa.t / cutechess.games} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
+                f"iterations: {int(spsa.t / cutechess.games)} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
             print(
                 f"games: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per game)")
             for param in spsa.params:
@@ -94,7 +94,7 @@ def main():
         save_state(spsa)
         print("Final results: ")
         print(
-            f"iterations: {spsa.t / cutechess.games} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
+            f"iterations: {int(spsa.t / cutechess.games)} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
         print(
             f"games: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per game)")
         print("Final parameters: ")
