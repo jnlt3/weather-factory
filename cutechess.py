@@ -19,7 +19,8 @@ class CutechessMan:
         games: int = 120,
         tc: float = 5.0,
         hash: int = 8,
-        threads: int = 1
+        threads: int = 1,
+        save_rate: int = 10
     ):
         self.engine = engine
         self.book = book

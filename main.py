@@ -65,6 +65,10 @@ def main():
 
     start_t = t
 
+    print("Initial state: ")
+    for param in spsa.params:
+        print(param)
+    print()
     try:
         while True:
             start = time.time()
@@ -73,14 +77,29 @@ def main():
 
             graph.update(spsa.t, copy.deepcopy(spsa.params))
             graph.save("graph.png")
+
+            if ((spsa.t / cutechess.games) % cutechess.save_rate) == 0:
+                print("Saving state...")
+                save_state(spsa)
+            
             print(
-                f"iterations: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per iter)")
+                f"iterations: {int(spsa.t / cutechess.games)} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
+            print(
+                f"games: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per game)")
             for param in spsa.params:
                 print(param)
             print()
     finally:
         print("Saving state...")
         save_state(spsa)
+        print("Final results: ")
+        print(
+            f"iterations: {int(spsa.t / cutechess.games)} ({(avg_time / (spsa.t / cutechess.games - start_t)):.2f}s per iter)")
+        print(
+            f"games: {spsa.t} ({(avg_time / (spsa.t - start_t)):.2f}s per game)")
+        print("Final parameters: ")
+        for param in spsa.params:
+            print(param)
 
 
 if __name__ == "__main__":
