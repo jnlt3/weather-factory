@@ -37,5 +37,7 @@ games: number of games played per SPSA iteration, make sure this is a multiple o
 tc: The time control the matches are going to be played at. Increment is automatically `tc / 100`.
 
 threads: This corresponds to concurrency it cutechess, not the threads of the engine.
+
+save_rate: The number of games between times saving the state to a file
 ```
 
