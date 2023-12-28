@@ -29,6 +29,7 @@ class CutechessMan:
         self.inc = tc / 100
         self.hash_size = hash
         self.threads = threads
+        self.save_rate = save_rate
 
     def get_cutechess_cmd(
         self,
