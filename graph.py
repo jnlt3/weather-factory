@@ -21,6 +21,7 @@ class Graph:
                     (param.value - param.start_val) / param.step)
         for name, value in param_values.items():
             plt.plot(self.time, value, label=name)
-        plt.legend()
-        plt.savefig(f"tuner/{file_name}")
+        plt.legend(fontsize=6, loc="upper left")
+        plt.savefig(f"tuner/{file_name}", dpi=250)
         plt.clf()
+        
