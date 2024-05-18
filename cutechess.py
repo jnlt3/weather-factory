@@ -20,7 +20,8 @@ class CutechessMan:
         tc: float = 5.0,
         hash: int = 8,
         threads: int = 1,
-        save_rate: int = 10
+        save_rate: int = 10,
+        pgnout: str = "tuner/games.pgn"
     ):
         self.engine = engine
         self.book = book
@@ -30,6 +31,7 @@ class CutechessMan:
         self.hash_size = hash
         self.threads = threads
         self.save_rate = save_rate
+        self.pgnout = pgnout
 
     def get_cutechess_cmd(
         self,
@@ -51,7 +53,7 @@ class CutechessMan:
             f"-openings file=tuner/{self.book} "
             f"format={self.book.split('.')[-1]} order=random plies=16 "
             f"-games {self.games} "
-            "-pgnout tuner/games.pgn"
+            f"-pgnout {self.pgnout}"
         )
 
     def run(self, params_a: list[str], params_b: list[str]) -> MatchResult:
