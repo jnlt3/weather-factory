@@ -38,6 +38,8 @@ tc: The time control the matches are going to be played at. Increment is automat
 
 threads: This corresponds to concurrency it cutechess, not the threads of the engine.
 
+pgnout: The filepath to the PGN all the games played should be saved to.
+
 save_rate: The number of games between times saving the state to a file
 ```
 
