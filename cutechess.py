@@ -41,7 +41,7 @@ class CutechessMan:
         params_a: list[str],
         params_b: list[str]
     ) -> str:
-        command = "fastchess -output format=cutechess" if self.use_fastchess else "cutechess-cli"
+        command = "fastchess -output format=cutechess -config discard=true outname=tuner/fastchess_config.json" if self.use_fastchess else "cutechess-cli"
 
         if Path("./tuner/" + command.split()[0]).exists():
             command = "./tuner/" + command
