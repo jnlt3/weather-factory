@@ -5,7 +5,9 @@ Weather Factory is a WIP SPSA tuner for UCI compliant chess engines.
 Usage instructions:
 
 make a folder "tuner"
-Put the cutechess-cli binary, the opening book and the engine binary in the folder.
+Put the opening book and the engine binary in the folder.
+If the cutechess-cli or fastchess binary are not in the PATH environment variable you have to put one of them into the "tuner" folder as well.
+It is suggested to use fastchess, since it has less overhead.
 
 Change the .json config files following the format presented.
 
@@ -41,5 +43,7 @@ threads: This corresponds to concurrency it cutechess, not the threads of the en
 pgnout: The filepath to the PGN all the games played should be saved to.
 
 save_rate: The number of games between times saving the state to a file
+
+use_fastchess: Set to true of you want to use fastchess and set to false if you want to use cutechess
 ```
 
