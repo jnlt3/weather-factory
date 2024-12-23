@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from subprocess import PIPE, Popen
+from pathlib import Path
 
 
 @dataclass
@@ -21,7 +22,8 @@ class CutechessMan:
         hash: int = 8,
         threads: int = 1,
         save_rate: int = 10,
-        pgnout: str = "tuner/games.pgn"
+        pgnout: str = "tuner/games.pgn",
+        use_fastchess: bool = True
     ):
         self.engine = engine
         self.book = book
@@ -32,27 +34,34 @@ class CutechessMan:
         self.threads = threads
         self.save_rate = save_rate
         self.pgnout = pgnout
+        self.use_fastchess = use_fastchess
 
     def get_cutechess_cmd(
         self,
         params_a: list[str],
         params_b: list[str]
     ) -> str:
+        command = "fastchess -config discard=true outname=tuner/fastchess_config.json -output format=cutechess" if self.use_fastchess else "cutechess-cli"
+
+        if Path("./tuner/" + command.split()[0]).exists():
+            command = "./tuner/" + command
+
         return (
-            "./tuner/cutechess-cli "
-            f"-engine cmd=./tuner/{self.engine} name={self.engine} proto=uci "
+            f"{command} "
+            f"-engine cmd=./tuner/{self.engine} name={self.engine}-1 proto=uci "
             f"option.Hash={self.hash_size} {' '.join(params_a)} "
-            f"-engine cmd=./tuner/{self.engine} name={self.engine} proto=uci "
+            f"-engine cmd=./tuner/{self.engine} name={self.engine}-2 proto=uci "
             f"option.Hash={self.hash_size} {' '.join(params_b)} "
             "-resign movecount=3 score=400 "
             "-draw movenumber=40 movecount=8 score=10 "
-            "-repeat "
             "-recover "
             f"-concurrency {self.threads} "
             f"-each tc={self.tc}+{self.inc} "
             f"-openings file=tuner/{self.book} "
             f"format={self.book.split('.')[-1]} order=random plies=16 "
-            f"-games {self.games} "
+            "-repeat 2 "
+            "-games 2 "
+            f"-rounds {self.games // 2} "
             f"-pgnout {self.pgnout}"
         )
 
